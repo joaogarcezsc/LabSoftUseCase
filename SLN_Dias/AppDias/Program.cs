@@ -6,9 +6,9 @@ class Program
 {
     static void Main(string[] args)
     {
-        Console.WriteLine("=================================");
-        Console.WriteLine(" SoftwareHouse - SISTEMA DE GESTÃO DE TAREFAS 0133");
-        Console.WriteLine("=================================\n");
+Console.WriteLine("=================================");
+Console.WriteLine(" SoftwareHouse - SISTEMA DE GESTÃO DE TAREFAS - Versão 1.0.0");
+Console.WriteLine("=================================\n");
 
         Console.Write("Digite o nome da tarefa: ");
         string nome = Console.ReadLine() ?? "Sem nome";
