@@ -6,7 +6,6 @@ class Program
 {
     static void Main(string[] args)
     {
-        // Em Program.cs, modifique o bloco do cabeçalho:
         Console.WriteLine("=================================");
         Console.WriteLine(" SISTEMA DE GESTÃO DE TAREFAS - Versão 1.0.0");
         Console.WriteLine("=================================\n");
