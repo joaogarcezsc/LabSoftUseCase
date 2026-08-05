@@ -7,7 +7,7 @@ class Program
     static void Main(string[] args)
     {
         Console.WriteLine("=================================");
-        Console.WriteLine(" SISTEMA DE GESTÃO DE TAREFAS - Versão 1.0.0");
+        Console.WriteLine(" SoftwareHouse - SISTEMA DE GESTÃO DE TAREFAS 01");
         Console.WriteLine("=================================\n");
 
         Console.Write("Digite o nome da tarefa: ");
