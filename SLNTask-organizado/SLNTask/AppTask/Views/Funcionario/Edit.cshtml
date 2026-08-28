@@ -1,7 +1,9 @@
 @model AppTask.Models.Funcionario
+@using Microsoft.AspNetCore.Mvc.Rendering
 
 @{
     ViewData["Title"] = "Editar funcionário";
+    var listaGerentes = ViewBag.CodigoGerente as IEnumerable<SelectListItem>;
 }
 
 <h1>Editar funcionário</h1>
@@ -30,6 +32,32 @@
                 <span asp-validation-for="DepartamentoId" class="text-danger"></span>
             </div>
 
+            <div class="mb-3 form-check">
+                <input type="checkbox" asp-for="EhGerente" class="form-check-input" />
+                <input type="hidden" name="EhGerente" value="false" />
+                <label asp-for="EhGerente" class="form-check-label">Este funcionário é gerente</label>
+            </div>
+
+            <div class="mb-3" id="grupoGerente">
+                <label asp-for="CodigoGerente" class="form-label">Gerente</label>
+                <select asp-for="CodigoGerente" class="form-select" id="CodigoGerente">
+                    <option value="">Nenhum / não se aplica</option>
+
+                    @if (listaGerentes != null)
+                    {
+                        foreach (var gerente in listaGerentes)
+                        {
+                            <option value="@gerente.Value"
+                                    selected="@(gerente.Selected ? "selected" : null)">
+                                @gerente.Text
+                            </option>
+                        }
+                    }
+                </select>
+                <span asp-validation-for="CodigoGerente" class="text-danger"></span>
+                <small class="form-text text-muted">Só aparecem gerentes do mesmo departamento selecionado acima.</small>
+            </div>
+
             <button type="submit" class="btn btn-primary">Salvar</button>
             <a asp-action="Index" class="btn btn-secondary">Voltar</a>
         </form>
@@ -37,5 +65,55 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        const codigoFuncionarioAtual = @Model.Codigo;
+        const checkboxGerente = document.getElementById('EhGerente');
+        const selectGerente = document.getElementById('CodigoGerente');
+        const grupoGerente = document.getElementById('grupoGerente');
+        const selectDepartamento = document.getElementById('DepartamentoId');
+
+        function atualizarEstadoSelectGerente() {
+            const marcado = checkboxGerente.checked;
+            selectGerente.disabled = marcado;
+            grupoGerente.style.opacity = marcado ? 0.5 : 1;
+            if (marcado) {
+                selectGerente.value = '';
+            }
+        }
+
+        async function carregarGerentesDoDepartamento() {
+            const departamentoId = selectDepartamento.value;
+            const valorAtual = selectGerente.value;
+            selectGerente.innerHTML = '';
+
+            if (!departamentoId) {
+                selectGerente.innerHTML = '<option value="">Selecione um departamento primeiro</option>';
+                return;
+            }
+
+            try {
+                const resposta = await fetch(`/Funcionario/ObterGerentesPorDepartamento?departamentoId=${departamentoId}&excluirCodigo=${codigoFuncionarioAtual}`);
+                const gerentes = await resposta.json();
+
+                selectGerente.innerHTML = '<option value="">Nenhum / não se aplica</option>';
+
+                gerentes.forEach(g => {
+                    const opcao = document.createElement('option');
+                    opcao.value = g.codigo;
+                    opcao.textContent = g.nome;
+                    if (String(g.codigo) === valorAtual) opcao.selected = true;
+                    selectGerente.appendChild(opcao);
+                });
+            } catch (erro) {
+                console.error('Erro ao carregar gerentes:', erro);
+            }
+        }
+
+        checkboxGerente.addEventListener('change', atualizarEstadoSelectGerente);
+        selectDepartamento.addEventListener('change', carregarGerentesDoDepartamento);
+        atualizarEstadoSelectGerente();
+    </script>
 }

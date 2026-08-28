@@ -4,6 +4,7 @@
 @{
     ViewData["Title"] = "Novo Funcionário";
     var listaDepartamentos = ViewBag.DepartamentoId as IEnumerable<SelectListItem>;
+    var listaGerentes = ViewBag.CodigoGerente as IEnumerable<SelectListItem>;
 }
 
 <h1 class="mb-4">Novo Funcionário</h1>
@@ -57,6 +58,40 @@
                 </select>
             </div>
 
+            <div class="mb-3 form-check">
+                <input type="checkbox"
+                       id="ehGerente"
+                       name="EhGerente"
+                       value="true"
+                       class="form-check-input" />
+                <input type="hidden" name="EhGerente" value="false" />
+                <label for="ehGerente" class="form-check-label">
+                    Cadastrar este funcionário como gerente
+                </label>
+            </div>
+
+            <div class="mb-3" id="grupoGerente">
+                <label for="CodigoGerente" class="form-label">Gerente</label>
+
+                <select id="CodigoGerente"
+                        name="CodigoGerente"
+                        class="form-select">
+                    <option value="">Selecione um departamento primeiro</option>
+
+                    @if (listaGerentes != null)
+                    {
+                        foreach (var gerente in listaGerentes)
+                        {
+                            <option value="@gerente.Value"
+                                    selected="@(gerente.Selected ? "selected" : null)">
+                                @gerente.Text
+                            </option>
+                        }
+                    }
+                </select>
+                <small class="form-text text-muted">Só aparecem gerentes do mesmo departamento selecionado acima.</small>
+            </div>
+
             <button type="submit" class="btn btn-primary">
                 Salvar
             </button>
@@ -67,3 +102,59 @@
         </form>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        const checkboxGerente = document.getElementById('ehGerente');
+        const selectGerente = document.getElementById('CodigoGerente');
+        const grupoGerente = document.getElementById('grupoGerente');
+        const selectDepartamento = document.getElementById('DepartamentoId');
+
+        function atualizarEstadoSelectGerente() {
+            const marcado = checkboxGerente.checked;
+            selectGerente.disabled = marcado;
+            grupoGerente.style.opacity = marcado ? 0.5 : 1;
+            if (marcado) {
+                selectGerente.value = '';
+            }
+        }
+
+        async function carregarGerentesDoDepartamento() {
+            const departamentoId = selectDepartamento.value;
+            selectGerente.innerHTML = '';
+
+            if (!departamentoId) {
+                selectGerente.innerHTML = '<option value="">Selecione um departamento primeiro</option>';
+                return;
+            }
+
+            try {
+                const resposta = await fetch(`/Funcionario/ObterGerentesPorDepartamento?departamentoId=${departamentoId}`);
+                const gerentes = await resposta.json();
+
+                selectGerente.innerHTML = '<option value="">Nenhum / não se aplica</option>';
+
+                if (gerentes.length === 0) {
+                    const opcao = document.createElement('option');
+                    opcao.value = '';
+                    opcao.textContent = 'Nenhum gerente cadastrado nesse departamento';
+                    selectGerente.appendChild(opcao);
+                    return;
+                }
+
+                gerentes.forEach(g => {
+                    const opcao = document.createElement('option');
+                    opcao.value = g.codigo;
+                    opcao.textContent = g.nome;
+                    selectGerente.appendChild(opcao);
+                });
+            } catch (erro) {
+                console.error('Erro ao carregar gerentes:', erro);
+            }
+        }
+
+        checkboxGerente.addEventListener('change', atualizarEstadoSelectGerente);
+        selectDepartamento.addEventListener('change', carregarGerentesDoDepartamento);
+        atualizarEstadoSelectGerente();
+    </script>
+}

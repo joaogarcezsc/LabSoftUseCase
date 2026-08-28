@@ -19,6 +19,8 @@
             <th>Nome</th>
             <th>Cargo</th>
             <th>Departamento</th>
+            <th>É gerente?</th>
+            <th>Gerente</th>
             <th>Ações</th>
         </tr>
     </thead>
@@ -30,6 +32,8 @@
                 <td>@item.Nome</td>
                 <td>@item.Cargo</td>
                 <td>@item.Departamento?.Nome</td>
+                <td>@(item.EhGerente ? "Sim" : "Não")</td>
+                <td>@(item.Gerente?.Nome ?? "—")</td>
                 <td>
                     <a href="/Funcionario/Edit/@item.Codigo"
                        class="btn btn-primary btn-sm text-white">

@@ -55,11 +55,20 @@ public partial class DbTasksContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false);
 
+            entity.Property(e => e.EhGerente)
+                .HasDefaultValue(false);
+
             entity.HasOne(e => e.Departamento)
                 .WithMany(e => e.Funcionarios)
                 .HasForeignKey(e => e.DepartamentoId)
                 .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("FK_Funcionario_Departamento");
+
+            entity.HasOne(e => e.Gerente)
+                .WithMany(e => e.Subordinados)
+                .HasForeignKey(e => e.CodigoGerente)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_Funcionario_Gerente");
         });
 
         modelBuilder.Entity<Tarefa>(entity =>
