@@ -17,6 +17,7 @@ public partial class DbTasksContext : DbContext
     public virtual DbSet<Funcionario> Funcionarios { get; set; } = null!;
     public virtual DbSet<Tarefa> Tarefas { get; set; } = null!;
     public virtual DbSet<Incidente> Incidentes { get; set; } = null!;
+    public virtual DbSet<CentroDeCusto> CentrosDeCusto { get; set; } = null!;
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -112,6 +113,32 @@ public partial class DbTasksContext : DbContext
             entity.Property(e => e.Resolvido)
                 .HasMaxLength(3)
                 .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<CentroDeCusto>(entity =>
+        {
+            entity.HasKey(e => e.Codigo);
+            entity.ToTable("CentroDeCusto");
+
+            entity.HasIndex(e => e.CodigoCentro).IsUnique();
+            entity.Property(e => e.CodigoCentro).HasMaxLength(20).IsUnicode(false);
+            entity.Property(e => e.Nome).HasMaxLength(100).IsUnicode(false);
+            entity.Property(e => e.Descricao).HasMaxLength(250).IsUnicode(false);
+            entity.Property(e => e.OrcamentoMensal).HasPrecision(18, 2);
+            entity.Property(e => e.DataCriacao).HasColumnType("date");
+            entity.Property(e => e.Ativo).HasDefaultValue(true);
+
+            entity.HasOne(e => e.Departamento)
+                .WithMany()
+                .HasForeignKey(e => e.DepartamentoId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_CentroDeCusto_Departamento");
+
+            entity.HasOne(e => e.Responsavel)
+                .WithMany()
+                .HasForeignKey(e => e.ResponsavelId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_CentroDeCusto_Responsavel");
         });
     }
 }
