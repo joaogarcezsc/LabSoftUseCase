@@ -1,56 +1,10 @@
 @model IEnumerable<AppTask.Models.Funcionario>
-
 @{
-    ViewData["Title"] = "Funcionários";
+    ViewData["Title"] = "Funcionários"; var registros = Model?.ToList() ?? new List<AppTask.Models.Funcionario>();
 }
-
-<h1 class="mb-4">Lista de Funcionários</h1>
-
-<p>
-    <a href="/Funcionario/Create" class="btn btn-success text-white">
-        Novo funcionário
-    </a>
-</p>
-
-<table class="table table-striped table-hover">
-    <thead class="table-dark">
-        <tr>
-            <th>Código</th>
-            <th>Nome</th>
-            <th>Cargo</th>
-            <th>Departamento</th>
-            <th>É gerente?</th>
-            <th>Gerente</th>
-            <th>Ações</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Codigo</td>
-                <td>@item.Nome</td>
-                <td>@item.Cargo</td>
-                <td>@item.Departamento?.Nome</td>
-                <td>@(item.EhGerente ? "Sim" : "Não")</td>
-                <td>@(item.Gerente?.Nome ?? "—")</td>
-                <td>
-                    <a href="/Funcionario/Edit/@item.Codigo"
-                       class="btn btn-primary btn-sm text-white">
-                        Alterar
-                    </a>
-
-                    <a href="/Funcionario/Details/@item.Codigo"
-                       class="btn btn-success btn-sm text-white">
-                        Detalhes
-                    </a>
-
-                    <a href="/Funcionario/Delete/@item.Codigo"
-                       class="btn btn-danger btn-sm text-white">
-                        Excluir
-                    </a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="page-header"><div><p class="eyebrow">Pessoas / diretório</p><h1>Funcionários</h1><p class="page-subtitle">Diretório operacional, cargos e vínculo departamental da equipe.</p></div><a asp-action="Create" class="btn btn-primary">+ Novo funcionário</a></div>
+<div class="grid-toolbar"><span class="grid-toolbar__meta">@registros.Count.ToString("00") REGISTROS</span><input class="search-field" type="search" placeholder="Filtrar pessoas..." aria-label="Filtrar pessoas" data-grid-search="#people-grid" /></div>
+<div class="data-grid-wrap"><table class="data-grid" id="people-grid"><thead><tr><th>ID</th><th>Nome</th><th>Cargo</th><th>Departamento</th><th>Gerente</th><th>Perfil</th><th class="text-end">Ações</th></tr></thead><tbody>@foreach (var item in registros) {
+<tr><td>#@item.Codigo.ToString("0000")</td><td class="cell-primary">@item.Nome</td><td>@item.Cargo</td><td>@(item.Departamento?.Nome ?? "—")</td><td>@(item.Gerente?.Nome ?? "—")</td><td><span class="status-label">@(item.EhGerente ? "Gerente" : "Colaborador")</span></td><td><div class="row-actions"><a asp-action="Edit" asp-route-id="@item.Codigo">Editar</a><a asp-action="Details" asp-route-id="@item.Codigo">Ver</a><a class="danger" asp-action="Delete" asp-route-id="@item.Codigo">Excluir</a></div></td></tr>
+}
+</tbody></table></div>

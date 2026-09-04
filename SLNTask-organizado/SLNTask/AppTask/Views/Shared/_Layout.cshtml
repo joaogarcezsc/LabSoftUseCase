@@ -1,45 +1,61 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString() ?? "Home";
+    var action = ViewContext.RouteData.Values["action"]?.ToString() ?? "Index";
+    var sectionName = controller switch
+    {
+        "Tarefa" => "Tarefas",
+        "Funcionario" => "Funcionários",
+        "Departamento" => "Departamentos",
+        "Incidentes" => "Incidentes",
+        _ => "Visão geral"
+    };
+}
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - AppTask</title>
+    <title>@ViewData["Title"] · AppTask</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/AppTask.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-controller="Home" asp-action="Index">AppTask</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Alternar navegação">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item"><a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Início</a></li>
-                        <li class="nav-item"><a class="nav-link text-dark" asp-controller="Tarefa" asp-action="Index">Tarefas</a></li>
-                        <li class="nav-item"><a class="nav-link text-dark" asp-controller="Funcionario" asp-action="Index">Funcionários</a></li>
-                        <li class="nav-item"><a class="nav-link text-dark" asp-controller="Departamento" asp-action="Index">Departamentos</a></li>
-                        <li class="nav-item"><a class="nav-link text-dark" asp-controller="Incidentes" asp-action="Index">Incidentes</a></li>
-                    </ul>
-                </div>
+    <header class="topbar">
+        <div class="topbar__inner">
+            <a class="brand" asp-controller="Home" asp-action="Index" aria-label="AppTask — início">
+                <span class="brand__mark">A</span>
+                <span>AppTask</span>
+            </a>
+            <nav class="primary-nav" aria-label="Navegação principal">
+                <a class="nav-link @(controller == "Home" ? "is-active" : "")" asp-controller="Home" asp-action="Index">Início</a>
+                <a class="nav-link @(controller == "Tarefa" ? "is-active" : "")" asp-controller="Tarefa" asp-action="Index">Tarefas</a>
+                <a class="nav-link @(controller == "Funcionario" ? "is-active" : "")" asp-controller="Funcionario" asp-action="Index">Funcionários</a>
+                <a class="nav-link @(controller == "Departamento" ? "is-active" : "")" asp-controller="Departamento" asp-action="Index">Estrutura</a>
+                <a class="nav-link @(controller == "Incidentes" ? "is-active" : "")" asp-controller="Incidentes" asp-action="Index">Incidentes</a>
+            </nav>
+            <div class="topbar__tools">
+                <button class="icon-button" type="button" data-theme-toggle aria-label="Alternar contraste" title="Alternar contraste">◐</button>
+                <span class="user-chip"><span class="user-chip__avatar">OP</span><span class="user-chip__name">Operação</span></span>
+                <button class="menu-button" type="button" data-nav-toggle aria-label="Abrir navegação">☰</button>
             </div>
-        </nav>
+        </div>
     </header>
 
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - AppTask
+    <main class="app-shell">
+        <div class="context-line">
+            <div class="breadcrumbs" aria-label="Breadcrumb">
+                <a asp-controller="Home" asp-action="Index">Workspace</a><span>/</span><strong>@sectionName</strong>
+            </div>
+            <span class="context-line__status"><span class="status-dot"></span> Operação normal</span>
         </div>
-    </footer>
+        <div class="page-content">@RenderBody()</div>
+    </main>
+
+    <footer class="app-footer"><span>AppTask</span><span>Ambiente operacional · 2026</span></footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

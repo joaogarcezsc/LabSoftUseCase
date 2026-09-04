@@ -1,160 +1,32 @@
 @model AppTask.Models.Funcionario
 @using Microsoft.AspNetCore.Mvc.Rendering
-
 @{
-    ViewData["Title"] = "Novo Funcionário";
-    var listaDepartamentos = ViewBag.DepartamentoId as IEnumerable<SelectListItem>;
-    var listaGerentes = ViewBag.CodigoGerente as IEnumerable<SelectListItem>;
+    ViewData["Title"] = "Novo funcionário"; var listaDepartamentos = ViewBag.DepartamentoId as IEnumerable<SelectListItem>; var listaGerentes = ViewBag.CodigoGerente as IEnumerable<SelectListItem>;
 }
-
-<h1 class="mb-4">Novo Funcionário</h1>
-
-<div class="row">
-    <div class="col-md-6">
-        <form action="/Funcionario/Create" method="post">
-            @Html.AntiForgeryToken()
-
-            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
-            <div class="mb-3">
-                <label for="Nome" class="form-label">Nome</label>
-                <input type="text"
-                       id="Nome"
-                       name="Nome"
-                       value="@Model?.Nome"
-                       class="form-control"
-                       required />
+<div class="page-header"><div><p class="eyebrow">Funcionários / novo registro</p><h1>Novo funcionário</h1><p class="page-subtitle">Adicione uma pessoa ao diretório e vincule-a à estrutura correta.</p></div></div>
+<div class="form-panel">
+    <div class="form-panel__body">
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()<div asp-validation-summary="ModelOnly" class="validation-summary-errors mb-4"></div><div class="form-grid">
+                <div class="form-field"><label for="Nome" class="form-label">Nome completo</label><input id="Nome" name="Nome" value="@Model?.Nome" class="form-control" required autocomplete="name" /></div>
+                <div class="form-field"><label for="Cargo" class="form-label">Cargo</label><input id="Cargo" name="Cargo" value="@Model?.Cargo" class="form-control" required /></div>
+                <div class="form-field"><label for="DepartamentoId" class="form-label">Departamento</label><select id="DepartamentoId" name="DepartamentoId" class="form-select" required><option value="">Selecione um departamento</option>@if (listaDepartamentos != null) { foreach (var departamento in listaDepartamentos) {
+                <option value="@departamento.Value" selected="@(departamento.Selected ? "selected" : null)">@departamento.Text</option>
+                                } }
+</select></div>
+                <div class="form-field"><label for="CodigoGerente" class="form-label">Gerente direto</label><select id="CodigoGerente" name="CodigoGerente" class="form-select"><option value="">Selecione um departamento primeiro</option>@if (listaGerentes != null) { foreach (var gerente in listaGerentes) {
+                <option value="@gerente.Value" selected="@(gerente.Selected ? "selected" : null)">@gerente.Text</option>
+                                } }
+</select><p class="form-help">A lista é filtrada pelo departamento.</p></div>
+                <div class="form-field form-field--wide"><label class="form-check"><input type="checkbox" id="ehGerente" name="EhGerente" value="true" class="form-check-input" @(Model?.EhGerente == true ? "checked" : "") /><input type="hidden" name="EhGerente" value="false" /><span class="form-label">Este funcionário também é gerente</span></label></div>
+                <div class="form-actions form-field--wide"><button type="submit" class="btn btn-primary">Salvar funcionário</button><a asp-action="Index" class="btn btn-outline-secondary">Cancelar</a></div>
             </div>
-
-            <div class="mb-3">
-                <label for="Cargo" class="form-label">Cargo</label>
-                <input type="text"
-                       id="Cargo"
-                       name="Cargo"
-                       value="@Model?.Cargo"
-                       class="form-control"
-                       required />
-            </div>
-
-            <div class="mb-3">
-                <label for="DepartamentoId" class="form-label">Departamento</label>
-
-                <select id="DepartamentoId"
-                        name="DepartamentoId"
-                        class="form-select"
-                        required>
-                    <option value="">Selecione um departamento</option>
-
-                    @if (listaDepartamentos != null)
-                    {
-                        foreach (var departamento in listaDepartamentos)
-                        {
-                            <option value="@departamento.Value"
-                                    selected="@(departamento.Selected ? "selected" : null)">
-                                @departamento.Text
-                            </option>
-                        }
-                    }
-                </select>
-            </div>
-
-            <div class="mb-3 form-check">
-                <input type="checkbox"
-                       id="ehGerente"
-                       name="EhGerente"
-                       value="true"
-                       class="form-check-input" />
-                <input type="hidden" name="EhGerente" value="false" />
-                <label for="ehGerente" class="form-check-label">
-                    Cadastrar este funcionário como gerente
-                </label>
-            </div>
-
-            <div class="mb-3" id="grupoGerente">
-                <label for="CodigoGerente" class="form-label">Gerente</label>
-
-                <select id="CodigoGerente"
-                        name="CodigoGerente"
-                        class="form-select">
-                    <option value="">Selecione um departamento primeiro</option>
-
-                    @if (listaGerentes != null)
-                    {
-                        foreach (var gerente in listaGerentes)
-                        {
-                            <option value="@gerente.Value"
-                                    selected="@(gerente.Selected ? "selected" : null)">
-                                @gerente.Text
-                            </option>
-                        }
-                    }
-                </select>
-                <small class="form-text text-muted">Só aparecem gerentes do mesmo departamento selecionado acima.</small>
-            </div>
-
-            <button type="submit" class="btn btn-primary">
-                Salvar
-            </button>
-
-            <a href="/Funcionario" class="btn btn-secondary">
-                Voltar
-            </a>
         </form>
     </div>
 </div>
-
 @section Scripts {
-    <script>
-        const checkboxGerente = document.getElementById('ehGerente');
-        const selectGerente = document.getElementById('CodigoGerente');
-        const grupoGerente = document.getElementById('grupoGerente');
-        const selectDepartamento = document.getElementById('DepartamentoId');
-
-        function atualizarEstadoSelectGerente() {
-            const marcado = checkboxGerente.checked;
-            selectGerente.disabled = marcado;
-            grupoGerente.style.opacity = marcado ? 0.5 : 1;
-            if (marcado) {
-                selectGerente.value = '';
-            }
-        }
-
-        async function carregarGerentesDoDepartamento() {
-            const departamentoId = selectDepartamento.value;
-            selectGerente.innerHTML = '';
-
-            if (!departamentoId) {
-                selectGerente.innerHTML = '<option value="">Selecione um departamento primeiro</option>';
-                return;
-            }
-
-            try {
-                const resposta = await fetch(`/Funcionario/ObterGerentesPorDepartamento?departamentoId=${departamentoId}`);
-                const gerentes = await resposta.json();
-
-                selectGerente.innerHTML = '<option value="">Nenhum / não se aplica</option>';
-
-                if (gerentes.length === 0) {
-                    const opcao = document.createElement('option');
-                    opcao.value = '';
-                    opcao.textContent = 'Nenhum gerente cadastrado nesse departamento';
-                    selectGerente.appendChild(opcao);
-                    return;
-                }
-
-                gerentes.forEach(g => {
-                    const opcao = document.createElement('option');
-                    opcao.value = g.codigo;
-                    opcao.textContent = g.nome;
-                    selectGerente.appendChild(opcao);
-                });
-            } catch (erro) {
-                console.error('Erro ao carregar gerentes:', erro);
-            }
-        }
-
-        checkboxGerente.addEventListener('change', atualizarEstadoSelectGerente);
-        selectDepartamento.addEventListener('change', carregarGerentesDoDepartamento);
-        atualizarEstadoSelectGerente();
-    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+     <script>const checkboxGerente=document.getElementById('ehGerente'),selectGerente=document.getElementById('CodigoGerente'),selectDepartamento=document.getElementById('DepartamentoId');function atualizar(){selectGerente.disabled=checkboxGerente.checked;if(checkboxGerente.checked)selectGerente.value='';}async function carregar(){if(!selectDepartamento.value)return;const resposta=await fetch(`/Funcionario/ObterGerentesPorDepartamento?departamentoId=${selectDepartamento.value}`);const gerentes=await resposta.json();selectGerente.innerHTML='<option value="">Nenhum / não se aplica</option>';gerentes.forEach(g=>selectGerente.add(new Option(g.nome,g.codigo)));}checkboxGerente.addEventListener('change',atualizar);selectDepartamento.addEventListener('change',carregar);atualizar();</script>
 }

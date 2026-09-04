@@ -1,8 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Visão geral";
 }
-
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<div class="page-header"><div><p class="eyebrow">Workspace / visão geral</p><h1>Bom dia, operação.</h1><p class="page-subtitle">Um ponto de partida para acompanhar tarefas, pessoas e os sinais que exigem atenção.</p></div><a asp-controller="Tarefa" asp-action="Create" class="btn btn-primary">+ Nova tarefa</a></div>
+<div class="data-grid-wrap"><table class="data-grid"><thead><tr><th>Área</th><th>Contexto</th><th>Próxima ação</th><th class="text-end">Abrir</th></tr></thead><tbody><tr><td class="cell-mono">01</td><td class="cell-primary">Tarefas</td><td class="cell-muted">Acompanhar prazos e responsáveis</td><td><div class="row-actions" style="opacity:1"><a asp-controller="Tarefa" asp-action="Index">Acessar →</a></div></td></tr><tr><td class="cell-mono">02</td><td class="cell-primary">Pessoas</td><td class="cell-muted">Consultar diretório da equipe</td><td><div class="row-actions" style="opacity:1"><a asp-controller="Funcionario" asp-action="Index">Acessar →</a></div></td></tr><tr><td class="cell-mono">03</td><td class="cell-primary">Incidentes</td><td class="cell-muted">Ver ocorrências em aberto</td><td><div class="row-actions" style="opacity:1"><a asp-controller="Incidentes" asp-action="Index">Acessar →</a></div></td></tr></tbody></table></div>

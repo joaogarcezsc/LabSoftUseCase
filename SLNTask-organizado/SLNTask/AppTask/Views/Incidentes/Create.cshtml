@@ -1,84 +1,24 @@
 ﻿@model AppTask.Models.Incidente
-
 @{
-    ViewData["Title"] = "Novo Incidente";
+    ViewData["Title"] = "Novo incidente";
 }
-
-<h1 class="mb-4">Novo Incidente</h1>
-
-<div class="row">
-    <div class="col-md-6">
-        <form action="/Incidentes/Create" method="post">
-            @Html.AntiForgeryToken()
-
-            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
-            <div class="mb-3">
-                <label for="DescricaoProblema" class="form-label">
-                    Descrição do problema
-                </label>
-
-                <input type="text"
-                       id="DescricaoProblema"
-                       name="DescricaoProblema"
-                       value="@Model?.DescricaoProblema"
-                       maxlength="250"
-                       class="form-control"
-                       required />
+<div class="page-header"><div><p class="eyebrow">Incidentes / novo registro</p><h1>Novo incidente</h1><p class="page-subtitle">Registre uma ocorrência para que ela possa ser acompanhada até a resolução.</p></div></div>
+<div class="form-panel">
+    <div class="form-panel__body">
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()<div asp-validation-summary="ModelOnly" class="validation-summary-errors mb-4"></div><div class="form-grid">
+                <div class="form-field form-field--wide"><label asp-for="DescricaoProblema" class="form-label">Descrição do problema</label><input asp-for="DescricaoProblema" class="form-control" maxlength="250" placeholder="Descreva o que aconteceu" required /><span asp-validation-for="DescricaoProblema" class="field-validation-error"></span></div>
+                <div class="form-field"><label asp-for="DataIncidente" class="form-label">Data e hora</label><input asp-for="DataIncidente" type="datetime-local" class="form-control" required /><span asp-validation-for="DataIncidente" class="field-validation-error"></span></div>
+                <div class="form-field"><label asp-for="Resolvido" class="form-label">Situação</label><select asp-for="Resolvido" class="form-select" required><option value="">Selecione a situação</option><option value="sim">Resolvido</option><option value="nao">Em aberto</option></select><span asp-validation-for="Resolvido" class="field-validation-error"></span></div>
+                <div class="form-field form-field--wide"><label asp-for="Solucao" class="form-label">Solução aplicada <span class="form-help">opcional</span></label><textarea asp-for="Solucao" class="form-control" maxlength="250" rows="4" placeholder="Registre a solução ou os próximos passos"></textarea><span asp-validation-for="Solucao" class="field-validation-error"></span></div>
+                <div class="form-actions form-field--wide"><button type="submit" class="btn btn-primary">Salvar incidente</button><a asp-action="Index" class="btn btn-outline-secondary">Cancelar</a></div>
             </div>
-
-            <div class="mb-3">
-                <label for="DataIncidente" class="form-label">
-                    Data do incidente
-                </label>
-
-                <input type="datetime-local"
-                       id="DataIncidente"
-                       name="DataIncidente"
-                       value="@(Model == null ? "" : Model.DataIncidente.ToString("yyyy-MM-ddTHH:mm"))"
-                       class="form-control"
-                       required />
-            </div>
-
-            <div class="mb-3">
-                <label for="Solucao" class="form-label">
-                    Solução
-                </label>
-
-                <input type="text"
-                       id="Solucao"
-                       name="Solucao"
-                       value="@Model?.Solucao"
-                       maxlength="250"
-                       class="form-control" />
-            </div>
-
-            <div class="mb-3">
-                <label for="Resolvido" class="form-label">
-                    Resolvido
-                </label>
-
-                <select id="Resolvido"
-                        name="Resolvido"
-                        class="form-select"
-                        required>
-                    <option value="">Selecione</option>
-                    <option value="sim" selected="@(Model?.Resolvido == "sim" ? "selected" : null)">
-                        Sim
-                    </option>
-                    <option value="nao" selected="@(Model?.Resolvido == "nao" ? "selected" : null)">
-                        Não
-                    </option>
-                </select>
-            </div>
-
-            <button type="submit" class="btn btn-primary">
-                Salvar
-            </button>
-
-            <a href="/Incidentes" class="btn btn-secondary">
-                Voltar
-            </a>
         </form>
     </div>
 </div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+}
