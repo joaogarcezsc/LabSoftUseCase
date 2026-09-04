@@ -1,0 +1,4 @@
+@model AppTask.Models.CentroDeCusto
+@{ ViewData["Title"] = "Excluir centro de custo"; }
+<div class="page-header"><div><p class="eyebrow">Finanças / remoção</p><h1>Excluir centro de custo</h1><p class="page-subtitle">Esta ação remove apenas o cadastro do centro de custo.</p></div></div>
+<div class="form-panel"><div class="form-panel__body"><div class="form-field"><span class="form-label">Centro selecionado</span><strong>@Model.CodigoCentro · @Model.Nome</strong><span class="form-help">Departamento: @(Model.Departamento?.Nome ?? "Transversal")</span></div><form asp-action="Delete" method="post"><input type="hidden" asp-for="Codigo" /><div class="form-actions"><button type="submit" class="btn btn-danger">Excluir definitivamente</button><a asp-action="Index" class="btn btn-outline-secondary">Cancelar</a></div></form></div></div>
